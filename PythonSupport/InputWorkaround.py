@@ -10,6 +10,7 @@ ser = serial.Serial('COM8', 9600)
 while True:
     # Liest eine Zeile von der seriellen Schnittstelle
     line = ser.readline().decode('utf-8').strip()
+    print(line)
     commands = line.split(";")
 
     for command in commands:
