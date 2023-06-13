@@ -28,10 +28,11 @@ float t;
 //definions KY-024
 #define HallDigital 3
 #define HallAnalog A0
-
+#define HallDigital2 4
+#define HallAnalog2 A1
 //definitions LED
 #define NUM_LEDS 5
-#define DATA_PIN 3
+#define DATA_PIN 12
 #define CLOCK_PIN 13
 
 CRGB leds[NUM_LEDS];
@@ -53,7 +54,9 @@ void setup() {
   correction = -sensor.getAccelX();
   //Initiate KY-024 Hallsensor 
   pinMode(HallAnalog, INPUT);
-  pinMode(HallDigital, INPUT);
+  pinMode(HallDigital, INPUT); 
+  pinMode(HallAnalog2, INPUT);
+  pinMode(HallDigital2, INPUT);
   //Initiate LEDs
   FastLED.addLeds<WS2812, DATA_PIN, RGB>(leds, NUM_LEDS);  // GRB ordering is typical
 }
@@ -63,10 +66,13 @@ void loop() {
   //sensor.reset();
   int analog = analogRead (HallAnalog); 
   int digital = digitalRead (HallDigital);
-    
+  int analog2 = analogRead (HallAnalog2); 
+  int digital2 = digitalRead (HallDigital2);  
   //... und an dieser Stelle ausgegeben
   Serial.print ("Analoger Spannungswert:"); Serial.print (analog);  Serial.print ("V, ");
   Serial.print ("Grenzwert:");Serial.println(digital);
+    Serial.print ("Analoger Spannungswert:"); Serial.print (analog2);  Serial.print ("V, ");
+  Serial.print ("Grenzwert:");Serial.println(digital2);
   //Signal: Grünes Licht, sonst LED aus
   if(digital == 1){
       leds[0] = CRGB::Green;
