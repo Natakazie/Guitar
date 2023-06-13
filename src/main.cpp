@@ -17,11 +17,17 @@ float t;
 #define ClockMPU  SCL
 #define DataMPU  SDA
 
+//definitions MPU
 #define  DirRight  1
 #define  DirLeft  2
 #define DirUp  3
 #define DirDown 4
 #define bar 0.75
+
+//definions KY-024
+#define HallDigital 3
+#define HallAnalog A0
+
 
 int buttonPressed;
 int myFunction(int, int);
@@ -31,16 +37,26 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
   Serial.println("Initializing Connection");
+  //Initiate MPU
   sensor.reset();
-  delay(10);
   sensor.begin();
+  delay(1);
   sensor.read();
-  correction = -sensor.getAccelX(); 
+  correction = -sensor.getAccelX();
+  //Initiate KY-024 Hallsensor 
+  pinMode(HallAnalog, INPUT);
+  pinMode(HallDigital, INPUT);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   //sensor.reset();
+  int analog = analogRead (HallAnalog); 
+  int digital = digitalRead (HallDigital);
+    
+  //... und an dieser Stelle ausgegeben
+  Serial.print ("Analoger Spannungswert:"); Serial.print (analog);  Serial.print ("V, ");
+  Serial.print ("Grenzwert:");Serial.println(digital);
   sensor.read();
 
   if(sensor.getAccelX() + correction > bar){
@@ -54,6 +70,7 @@ void loop() {
   }else if (sensor.getAccelZ() > bar || sensor.getAccelZ() < -bar){
     buttonPressed= 0;
   }
+  /*
   Serial.print( correction);
   Serial.print(" ");
   Serial.print( sensor.getAccelX());
@@ -61,7 +78,7 @@ void loop() {
   Serial.print( sensor.getAccelY());
   Serial.print(" ");
   Serial.println(buttonPressed);
-
+*/
   /*
   if(tempX > ax){
   ax = tempX;
@@ -75,7 +92,7 @@ void loop() {
   Serial.print(max); //Serial.print(" "); Serial.print(ay); Serial.print(" "); Serial.print(az);
   Serial.println();
   */
-  delay(25);
+  delay(200);
 }
 
 // put function definitions here:
