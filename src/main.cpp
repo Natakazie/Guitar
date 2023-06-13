@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <FastLED.h>
 #include "GY521.h"
 
 GY521 sensor(0x68);
@@ -28,6 +29,13 @@ float t;
 #define HallDigital 3
 #define HallAnalog A0
 
+//definitions LED
+#define NUM_LEDS 5
+#define DATA_PIN 3
+#define CLOCK_PIN 13
+
+CRGB leds[NUM_LEDS];
+
 
 int buttonPressed;
 int myFunction(int, int);
@@ -46,6 +54,8 @@ void setup() {
   //Initiate KY-024 Hallsensor 
   pinMode(HallAnalog, INPUT);
   pinMode(HallDigital, INPUT);
+  //Initiate LEDs
+  FastLED.addLeds<WS2812, DATA_PIN, RGB>(leds, NUM_LEDS);  // GRB ordering is typical
 }
 
 void loop() {
@@ -57,6 +67,14 @@ void loop() {
   //... und an dieser Stelle ausgegeben
   Serial.print ("Analoger Spannungswert:"); Serial.print (analog);  Serial.print ("V, ");
   Serial.print ("Grenzwert:");Serial.println(digital);
+  //Signal: Grünes Licht, sonst LED aus
+  if(digital == 1){
+      leds[0] = CRGB::Green;
+        FastLED.show();
+  }else{
+      leds[0] = CRGB::Black;
+        FastLED.show();
+  }
   sensor.read();
 
   if(sensor.getAccelX() + correction > bar){
