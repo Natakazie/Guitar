@@ -73,7 +73,6 @@ void handleMPU(){
 }
   void sendData(){
     String toSend = "";
-    Serial.write(buttonPressed);
     if(digitalRead(HallDigital) > 0){
         toSend+="D;";
     }else{
@@ -84,6 +83,7 @@ void handleMPU(){
     }else{
       toSend+="a;";
     }
+    Serial.println(toSend);
   }
   /*
   Serial.print( correction);
@@ -112,18 +112,19 @@ void setup() {
   Serial.begin(9600);    // Starts the serial communication with a baud rate of 9600
   Serial.println("Initializing Connection");
   initMPU();
-  initKY024();
+  //initKY024();
   initLED();
+  Serial.println("Initialization Complete");
 }
 
 void loop() {
   //sensor.reset();
   sensor.read();
-  handleKY024();
+  //handleKY024();
   handleMPU();
   sendData();
-  unsigned long tar = millis()+20;
-  while(millis() < tar){
-
-  }
+  delay(20);
+  // unsigned long tar = millis()+20;
+  // while(millis() < tar){
+  // }
 }
