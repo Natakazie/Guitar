@@ -7,10 +7,6 @@ GY521 sensor(0x68);
 
 uint32_t counter = 0;
 
-float ax, max, ay, az;
-float gx, gy, gz;
-float t;
-
 // Define the pins for the Bluetooth module
 #define RXBluetooth  DD3
 #define TXBluetooth  DD2
@@ -74,6 +70,21 @@ void handleMPU(){
   }else if (sensor.getAccelZ() > bar || sensor.getAccelZ() < -bar){
     buttonPressed= 0;
   }
+}
+  void sendData(){
+    String toSend = "";
+    Serial.write(buttonPressed);
+    if(digitalRead(HallDigital) > 0){
+        toSend+="D;";
+    }else{
+      toSend+="d;";
+    }
+    if(digitalRead(HallDigital2) > 0){
+        toSend+="A;";
+    }else{
+      toSend+="a;";
+    }
+  }
   /*
   Serial.print( correction);
   Serial.print(" ");
@@ -83,7 +94,7 @@ void handleMPU(){
   Serial.print(" ");
   Serial.println(buttonPressed);
 */
-}
+
 
 void handleKY024(){ //hall sensor function
   // Read the analog and digital values from the Hall sensor
@@ -91,12 +102,6 @@ void handleKY024(){ //hall sensor function
   int digital = digitalRead(HallDigital);
   int analog2 = analogRead(HallAnalog2); 
   int digital2 = digitalRead(HallDigital2);  
-  // Prints the analog and digital values to the serial monitor
-  Serial.print("Analoger Spannungswert ONE:"); Serial.print(analog);  Serial.print("V, ");
-  Serial.print("Grenzwert:");Serial.println(digital);
-  Serial.print("Analoger Spannungswert TWO:"); Serial.print(analog2);  Serial.print("V, ");
-  Serial.print("Grenzwert:");Serial.println(digital2);
-  // If the digital value is 1, set the LED to green, otherwise turn it off
   leds[0] = (digital == 1) ? CRGB::Green : CRGB::Black;
   //update LED
   FastLED.show();
@@ -116,5 +121,9 @@ void loop() {
   sensor.read();
   handleKY024();
   handleMPU();
-  delay(200);
+  sendData();
+  unsigned long tar = millis()+20;
+  while(millis() < tar){
+
+  }
 }
