@@ -47,7 +47,7 @@ while True:
         elif command == 'right':
             keyboard.press(Key.right)
             keyboard.release(Key.left)
-        elif command == 'none':
+        elif command == 'neutral':
             keyboard.release(Key.up)
             keyboard.release(Key.down)
             keyboard.release(Key.left)
