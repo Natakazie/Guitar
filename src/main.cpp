@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <FastLED.h>
+#include <SoftwareSerial.h>
 #include "GY521.h"
 #include "Adafruit_DRV2605.h"
 
@@ -13,6 +14,9 @@ uint32_t counter = 0;
 // Define the pins for the Bluetooth module
 #define RXBluetooth  DD3
 #define TXBluetooth  DD2
+
+SoftwareSerial blueSerial(RXBluetooth, TXBluetooth); // RX, TX
+
 #define ClockMPU  SCL
 #define DataMPU  SDA
 
@@ -202,7 +206,11 @@ void handleMPU(){
 
 void setup() {
   Serial.begin(9600);    // Starts the serial communication with a baud rate of 9600
+  blueSerial.begin(9600);
   Serial.println("Initializing Connection");
+  blueSerial.println("Initializing Bluetooth Connection");
+  blueSerial.write("AT+NAMEguitargloves");
+  blueSerial.write("AT+PIN2023");
   initMPU();
   //initKY024();
   initLED();
