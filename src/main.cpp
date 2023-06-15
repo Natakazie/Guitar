@@ -137,24 +137,24 @@ void handleMPU(){
   void sendData(){
     String toSend = "";
     if(digitalRead(HallDigital0) > 0){
-        toSend+="D;";
+        toSend+="A;";
         leds[0] = CRGB::Green; 
     }else{
-      toSend+="d;";
-      leds[0] = CRGB::Green;
+      toSend+="a;";
+      leds[0] = CRGB::Black;
     }
     if(digitalRead(HallDigital1) > 0){
-        toSend+="A;";
+        toSend+="S;";
         leds[1] = CRGB::Red;
     }else{
-      toSend+="a;";
+      toSend+="s;";
       leds[1] = CRGB::Black;
     }
     if(digitalRead(HallDigital2) > 0){
-        toSend+="S;";
+        toSend+="D;";
         leds[2] = CRGB::Yellow; 
     }else{
-      toSend+="s;";
+      toSend+="d;";
       leds[2] = CRGB::Black;
     }
     if(digitalRead(HallDigital3) > 0){
@@ -237,8 +237,5 @@ void loop() {
   //unsigned long time = millis()+10;
   //while(millis() < time){
 
-  //}
-  // unsigned long tar = millis()+20;
-  // while(millis() < tar){
-  // }
+  }
 }
