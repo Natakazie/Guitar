@@ -234,8 +234,9 @@ void loop() {
   }
 
     
-  //unsigned long time = millis()+10;
-  //while(millis() < time){
+  unsigned long time = millis()+10;
+  while(millis() < time){
 
   }
 }
+
