@@ -12,8 +12,8 @@ Adafruit_DRV2605 drv;
 uint32_t counter = 0;
 
 // Define the pins for the Bluetooth module
-#define RXBluetooth  DD3
-#define TXBluetooth  DD2
+#define RXBluetooth  DD6
+#define TXBluetooth  DD7
 
 SoftwareSerial blueSerial(RXBluetooth, TXBluetooth); // RX, TX
 
@@ -83,6 +83,7 @@ void initMPU(){
 
 void initLED(){
   FastLED.addLeds<WS2812, DATA_PIN, RGB>(leds, NUM_LEDS);  // GRB ordering is typical
+  FastLED.setBrightness(0);
 }
 void initDRV(){
   Serial.println("Adafruit DRV2605 Basic test");
@@ -205,17 +206,22 @@ void handleMPU(){
 // }
 
 void setup() {
+  //init bluetooth
+  pinMode(TXBluetooth, OUTPUT);
+  pinMode(RXBluetooth, INPUT);
   Serial.begin(9600);    // Starts the serial communication with a baud rate of 9600
   blueSerial.begin(9600);
   Serial.println("Initializing Connection");
   blueSerial.println("Initializing Bluetooth Connection");
-  blueSerial.write("AT+NAMEguitargloves");
-  blueSerial.write("AT+PIN2023");
+  // blueSerial.write("AT+NAMEguitargloves");
+  // blueSerial.write("AT+PIN2023");
   initMPU();
   //initKY024();
   initLED();
   initDRV();
   Serial.println("Initialization Complete");
+
+
 }
 
 void loop() {
@@ -223,8 +229,13 @@ void loop() {
   //handleKY024();
   handleMPU();
   sendData();
+  while(blueSerial.available() > 0) {
+    char data = blueSerial.read();
+    Serial.print(data);
+  }
+
     
-  unsigned long time = millis()+1000;
+  unsigned long time = millis()+10;
   while(millis() < time){
 
   }
