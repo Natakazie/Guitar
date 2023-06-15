@@ -44,6 +44,9 @@ SoftwareSerial blueSerial(RXBluetooth, TXBluetooth); // RX, TX
 #define DATA_PIN 12
 #define CLOCK_PIN 13
 
+//definition Serial
+#define SERIAL blueSerial
+
 CRGB leds[NUM_LEDS];
 
 
@@ -77,7 +80,7 @@ void initMPU(){
   correctionX = -sensor.getAccelX();
   correctionY = -sensor.getAccelY();
   correctionZ = -sensor.getAccelZ();
-  Serial.print(correctionX);Serial.print(" "); Serial.print(correctionY);Serial.print(" "); Serial.println(correctionZ);
+  SERIAL.print(correctionX);SERIAL.print(" "); SERIAL.print(correctionY);SERIAL.print(" "); SERIAL.println(correctionZ);
   // Stores the negative of the X acceleration as correctionX
 }
 
@@ -86,9 +89,9 @@ void initLED(){
   FastLED.setBrightness(0);
 }
 void initDRV(){
-  Serial.println("Adafruit DRV2605 Basic test");
+  SERIAL.println("Adafruit DRV2605 Basic test");
   if (! drv.begin()) {
-    Serial.println("Could not find DRV2605");
+    SERIAL.println("Could not find DRV2605");
     while (1) delay(10);
   }
  
@@ -127,8 +130,8 @@ void handleMPU(){
     yAxis = 1;
     drv.go();
   }
-  Serial.print(xAxis);Serial.print(" ");
-  Serial.print( yAxis);Serial.print( " ");Serial.println(neutral);
+  SERIAL.print(xAxis);SERIAL.print(" ");
+  SERIAL.print( yAxis);SERIAL.print( " ");SERIAL.println(neutral);
 }
 
   void sendData(){
@@ -181,7 +184,7 @@ void handleMPU(){
     }else if(yAxis == -1){
       toSend+="right;";
     }
-    Serial.println(toSend);
+    SERIAL.println(toSend);
   }
   /*
   Serial.print( correctionX);
@@ -211,34 +214,30 @@ void setup() {
   pinMode(RXBluetooth, INPUT);
   Serial.begin(9600);    // Starts the serial communication with a baud rate of 9600
   blueSerial.begin(9600);
-  Serial.println("Initializing Connection");
-  blueSerial.println("Initializing Bluetooth Connection");
-  // blueSerial.write("AT+NAMEguitargloves");
-  // blueSerial.write("AT+PIN2023");
+  SERIAL.println("Initializing Connection");
   initMPU();
-  //initKY024();
+  initKY024();
   initLED();
   initDRV();
-  Serial.println("Initialization Complete");
-
-
+  blueSerial.print("AT+RESET\r\n");
+  SERIAL.println("Initialization Complete");
 }
 
 void loop() {
-  //sensor.reset();
+  sensor.reset();
   //handleKY024();
   handleMPU();
   sendData();
   while(blueSerial.available() > 0) {
     char data = blueSerial.read();
-    Serial.print(data);
+    SERIAL.print(data);
   }
 
     
-  unsigned long time = millis()+10;
-  while(millis() < time){
+  //unsigned long time = millis()+10;
+  //while(millis() < time){
 
-  }
+  //}
   // unsigned long tar = millis()+20;
   // while(millis() < tar){
   // }
