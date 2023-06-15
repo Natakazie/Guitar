@@ -134,24 +134,24 @@ void handleMPU(){
   void sendData(){
     String toSend = "";
     if(digitalRead(HallDigital0) > 0){
-        toSend+="D;";
+        toSend+="A;";
         leds[0] = CRGB::Green; 
     }else{
-      toSend+="d;";
-      leds[0] = CRGB::Green;
+      toSend+="a;";
+      leds[0] = CRGB::Black;
     }
     if(digitalRead(HallDigital1) > 0){
-        toSend+="A;";
+        toSend+="S;";
         leds[1] = CRGB::Red;
     }else{
-      toSend+="a;";
+      toSend+="s;";
       leds[1] = CRGB::Black;
     }
     if(digitalRead(HallDigital2) > 0){
-        toSend+="S;";
+        toSend+="D;";
         leds[2] = CRGB::Yellow; 
     }else{
-      toSend+="s;";
+      toSend+="d;";
       leds[2] = CRGB::Black;
     }
     if(digitalRead(HallDigital3) > 0){
@@ -167,6 +167,7 @@ void handleMPU(){
       toSend+="g;";
       leds[4] = CRGB::Black;
     }
+    FastLED.setBrightness(255);
     FastLED.show();
     if(neutral){
       toSend+="neutral;";
@@ -213,7 +214,7 @@ void setup() {
   blueSerial.begin(9600);
   Serial.println("Initializing Connection");
   blueSerial.println("Initializing Bluetooth Connection");
-  // blueSerial.write("AT+NAMEguitargloves");
+  // blueSergfgial.write("AT+NAMEguitargloves");
   // blueSerial.write("AT+PIN2023");
   initMPU();
   //initKY024();
@@ -239,7 +240,4 @@ void loop() {
   while(millis() < time){
 
   }
-  // unsigned long tar = millis()+20;
-  // while(millis() < tar){
-  // }
 }
