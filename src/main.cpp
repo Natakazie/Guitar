@@ -15,7 +15,7 @@ uint32_t counter = 0;
 #define RXBluetooth  DD6
 #define TXBluetooth  DD7
 
-SoftwareSerial blueSerial(RXBluetooth, TXBluetooth); // RX, TX
+// SoftwareSerial blueSerial(RXBluetooth, TXBluetooth); // RX, TX
 
 #define ClockMPU  SCL
 #define DataMPU  SDA
@@ -29,14 +29,15 @@ SoftwareSerial blueSerial(RXBluetooth, TXBluetooth); // RX, TX
 
 //definions KY-024 hall sensor
 #define HallDigital0 3
-#define HallAnalog0 A0
 #define HallDigital1 4
-#define HallAnalog1 A1
-#define HallDigital2 5
-#define HallAnalog2 A2
+#define HallDigital2 7
 #define HallDigital3 6
+#define HallDigital4 8
+
+#define HallAnalog0 A0
+#define HallAnalog1 A1
+#define HallAnalog2 A2
 #define HallAnalog3 A3
-#define HallDigital4 7
 #define HallAnalog4 A4
 
 //definitions LED
@@ -45,7 +46,8 @@ SoftwareSerial blueSerial(RXBluetooth, TXBluetooth); // RX, TX
 #define CLOCK_PIN 13
 
 //definition Serial
-#define SERIAL blueSerial
+#define SERIAL Serial
+#define DEBUG Serial
 
 CRGB leds[NUM_LEDS];
 
@@ -54,15 +56,19 @@ CRGB leds[NUM_LEDS];
 
 void initKY024(){ //init hall sensor
   pinMode(HallAnalog0, INPUT);
-  pinMode(HallDigital0, INPUT); 
   pinMode(HallAnalog1, INPUT);
-  pinMode(HallDigital1, INPUT);
   pinMode(HallAnalog2, INPUT);
-  pinMode(HallDigital2, INPUT); 
   pinMode(HallAnalog3, INPUT);
-  pinMode(HallDigital3, INPUT);
   pinMode(HallAnalog4, INPUT);
+
+  pinMode(HallDigital0, INPUT); 
+  pinMode(HallDigital1, INPUT);
+  pinMode(HallDigital2, INPUT); 
+  pinMode(HallDigital3, INPUT);
   pinMode(HallDigital4, INPUT);
+  for (int i = 0; i <=10; i++){
+    pinMode(i, INPUT);
+  }
 }
 float correctionX;
 float correctionY;
@@ -80,7 +86,7 @@ void initMPU(){
   correctionX = -sensor.getAccelX();
   correctionY = -sensor.getAccelY();
   correctionZ = -sensor.getAccelZ();
-  SERIAL.print(correctionX);SERIAL.print(" "); SERIAL.print(correctionY);SERIAL.print(" "); SERIAL.println(correctionZ);
+  Serial.print(correctionX);Serial.print(" "); Serial.print(correctionY);Serial.print(" "); Serial.println(correctionZ);
   // Stores the negative of the X acceleration as correctionX
 }
 
@@ -88,21 +94,20 @@ void initLED(){
   FastLED.addLeds<WS2812, DATA_PIN, RGB>(leds, NUM_LEDS);  // GRB ordering is typical
   FastLED.setBrightness(0);
 }
-void initDRV(){
-  SERIAL.println("Adafruit DRV2605 Basic test");
-  if (! drv.begin()) {
-    SERIAL.println("Could not find DRV2605");
-    while (1) delay(10);
-  }
+// void initDRV(){
+//   if (! drv.begin()) {
+//     Serial.println("Could not find DRV2605");
+//     while (1) delay(10);
+//   }
  
-  drv.selectLibrary(1);
+//   drv.selectLibrary(1);
   
-  // I2C trigger by sending 'go' command 
-  // default, internal trigger when sending GO command
-  drv.setMode(DRV2605_MODE_INTTRIG); 
-  drv.setWaveform(0, 56);  // play effect  
+//   // I2C trigger by sending 'go' command 
+//   // default, internal trigger when sending GO command
+//   drv.setMode(DRV2605_MODE_INTTRIG); 
+//   drv.setWaveform(0, 56);  // play effect  
     
-}
+// }
 bool neutral = false;
 int xAxis = 0;
 int yAxis = 0;
@@ -114,24 +119,24 @@ void handleMPU(){
     neutral = true;
     xAxis = 0;
     yAxis = 0;
-    drv.go();
+    // drv.go();
    }
     if(sensor.getAccelX() + correctionX > bar && xAxis!= 1){
     xAxis = 1;
-    drv.go();
+    // drv.go();
   }else   if(sensor.getAccelX() +correctionX < -bar && xAxis !=-1){
     xAxis = -1;
-    drv.go();
+    // drv.go();
   }
   if(sensor.getAccelY()+correctionY > bar && yAxis != -1){
     yAxis= -1;
-    drv.go();
+    // drv.go();
   }else   if(sensor.getAccelY() +correctionY < -bar && yAxis != 1){
     yAxis = 1;
-    drv.go();
+    // drv.go();
   }
-  SERIAL.print(xAxis);SERIAL.print(" ");
-  SERIAL.print( yAxis);SERIAL.print( " ");SERIAL.println(neutral);
+  // Serial.print(xAxis);Serial.print(" ");
+  // Serial.print( yAxis);Serial.print( " ");Serial.println(neutral);
 }
 
   void sendData(){
@@ -213,14 +218,14 @@ void setup() {
   pinMode(TXBluetooth, OUTPUT);
   pinMode(RXBluetooth, INPUT);
   Serial.begin(9600);    // Starts the serial communication with a baud rate of 9600
-  blueSerial.begin(9600);
-  SERIAL.println("Initializing Connection");
+  // blueSerial.begin(57600);
+  Serial.println("Initializing Connection");
   initMPU();
   initKY024();
-  initLED();
-  initDRV();
-  blueSerial.print("AT+RESET\r\n");
-  SERIAL.println("Initialization Complete");
+  // initLED();
+  // initDRV();
+  // blueSerial.print("AT+RESET\r\n");
+  Serial.println("Initialization Complete");
 }
 
 void loop() {
@@ -228,13 +233,13 @@ void loop() {
   //handleKY024();
   handleMPU();
   sendData();
-  while(blueSerial.available() > 0) {
-    char data = blueSerial.read();
-    SERIAL.print(data);
-  }
+  // while(blueSerial.available() > 0) {
+  //   char data = blueSerial.read();
+  //   SERIAL.print(data);
+  // }
 
     
-  unsigned long time = millis()+10;
+  unsigned long time = millis()+100;
   while(millis() < time){
 
   }

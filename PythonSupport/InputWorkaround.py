@@ -5,7 +5,21 @@ from pynput.keyboard import Controller, Key
 keyboard = Controller()
 
 # Stellen Sie eine Verbindung zum seriellen Port her
-ser = serial.Serial('COM8', 9600)
+i= 0
+while i < 128:
+    port = 'COM'+str(i)
+    try:
+        print("try "+ port)
+        ser = serial.Serial(port, 57600)
+        line = ser.readline().decode('utf-8').strip()
+        print(line)
+        if line != None:
+            break
+    except: 
+        print("retry")
+        i=i+1
+    
+print("start connection")
 
 while True:
     # Liest eine Zeile von der seriellen Schnittstelle
