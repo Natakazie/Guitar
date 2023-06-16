@@ -206,6 +206,7 @@ void setup() {
   initKY024();
   initLED();
   initDRV();
+  // TWSR |= 0b00000010;
   Serial.println("Initialization Complete");
 }
 
