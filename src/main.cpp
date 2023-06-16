@@ -92,7 +92,7 @@ void initMPU(){
 
 void initLED(){
   FastLED.addLeds<WS2812, DATA_PIN, RGB>(leds, NUM_LEDS);  // GRB ordering is typical
-  FastLED.setBrightness(0);
+  // FastLED.setBrightness(100);
 }
 // void initDRV(){
 //   if (! drv.begin()) {
@@ -119,21 +119,21 @@ void handleMPU(){
     neutral = true;
     xAxis = 0;
     yAxis = 0;
-    // drv.go();
+    drv.go();
    }
     if(sensor.getAccelX() + correctionX > bar && xAxis!= 1){
     xAxis = 1;
-    // drv.go();
+    drv.go();
   }else   if(sensor.getAccelX() +correctionX < -bar && xAxis !=-1){
     xAxis = -1;
-    // drv.go();
+    drv.go();
   }
   if(sensor.getAccelY()+correctionY > bar && yAxis != -1){
     yAxis= -1;
-    // drv.go();
+    drv.go();
   }else   if(sensor.getAccelY() +correctionY < -bar && yAxis != 1){
     yAxis = 1;
-    // drv.go();
+    drv.go();
   }
   // Serial.print(xAxis);Serial.print(" ");
   // Serial.print( yAxis);Serial.print( " ");Serial.println(neutral);
@@ -219,17 +219,19 @@ void setup() {
   pinMode(RXBluetooth, INPUT);
   Serial.begin(9600);    // Starts the serial communication with a baud rate of 9600
   // blueSerial.begin(57600);
+  
   Serial.println("Initializing Connection");
   initMPU();
   initKY024();
-  // initLED();
+  initLED();
   // initDRV();
   // blueSerial.print("AT+RESET\r\n");
+  // TWSR |= 0b00000011;
   Serial.println("Initialization Complete");
 }
 
 void loop() {
-  sensor.reset();
+  // sensor.reset();
   //handleKY024();
   handleMPU();
   sendData();
