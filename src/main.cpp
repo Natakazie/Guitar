@@ -46,15 +46,16 @@ CRGB leds[NUM_LEDS];
 
 
 void initKY024(){ //init hall sensor
-  pinMode(HallAnalog0, INPUT);
-  pinMode(HallDigital0, INPUT); 
+ pinMode(HallAnalog0, INPUT);
   pinMode(HallAnalog1, INPUT);
-  pinMode(HallDigital1, INPUT);
   pinMode(HallAnalog2, INPUT);
-  pinMode(HallDigital2, INPUT); 
   pinMode(HallAnalog3, INPUT);
-  pinMode(HallDigital3, INPUT);
   pinMode(HallAnalog4, INPUT);
+
+  pinMode(HallDigital0, INPUT); 
+  pinMode(HallDigital1, INPUT);
+  pinMode(HallDigital2, INPUT); 
+  pinMode(HallDigital3, INPUT);
   pinMode(HallDigital4, INPUT);
 }
 float correctionX;
@@ -73,7 +74,7 @@ void initMPU(){
   correctionX = -sensor.getAccelX();
   correctionY = -sensor.getAccelY();
   correctionZ = -sensor.getAccelZ();
-  Serial.print(correctionX);Serial.print(" "); Serial.print(correctionY);Serial.print(" "); Serial.println(correctionZ);
+  // Serial.print(correctionX);Serial.print(" "); Serial.print(correctionY);Serial.print(" "); Serial.println(correctionZ);
   // Stores the negative of the X acceleration as correctionX
 }
 
@@ -81,7 +82,6 @@ void initLED(){
   FastLED.addLeds<WS2812, DATA_PIN, RGB>(leds, NUM_LEDS);  // GRB ordering is typical
 }
 void initDRV(){
-  Serial.println("Adafruit DRV2605 Basic test");
   if (! drv.begin()) {
     Serial.println("Could not find DRV2605");
     while (1) delay(10);
@@ -122,31 +122,31 @@ void handleMPU(){
     yAxis = 1;
     drv.go();
   }
-  Serial.print(xAxis);Serial.print(" ");
-  Serial.print( yAxis);Serial.print( " ");Serial.println(neutral);
+  // Serial.print(xAxis);Serial.print(" ");
+  // Serial.print( yAxis);Serial.print( " ");Serial.println(neutral);
 }
 
-  void sendData(){
+    void sendData(){
     String toSend = "";
     if(digitalRead(HallDigital0) > 0){
-        toSend+="D;";
+        toSend+="A;";
         leds[0] = CRGB::Green; 
     }else{
-      toSend+="d;";
-      leds[0] = CRGB::Green;
+      toSend+="a;";
+      leds[0] = CRGB::Black;
     }
     if(digitalRead(HallDigital1) > 0){
-        toSend+="A;";
+        toSend+="S;";
         leds[1] = CRGB::Red;
     }else{
-      toSend+="a;";
+      toSend+="s;";
       leds[1] = CRGB::Black;
     }
     if(digitalRead(HallDigital2) > 0){
-        toSend+="S;";
+        toSend+="D;";
         leds[2] = CRGB::Yellow; 
     }else{
-      toSend+="s;";
+      toSend+="d;";
       leds[2] = CRGB::Black;
     }
     if(digitalRead(HallDigital3) > 0){
@@ -178,15 +178,14 @@ void handleMPU(){
     }
     Serial.println(toSend);
   }
-  /*
-  Serial.print( correctionX);
-  Serial.print(" ");
-  Serial.print( sensor.getAccelX());
-  Serial.print(" ");
-  Serial.print( sensor.getAccelY());
-  Serial.print(" ");
-  Serial.println(buttonPressed);
-*/
+//   Serial.print( correctionX);
+//   Serial.print(" ");
+//   Serial.print( sensor.getAccelX());
+//   Serial.print(" ");
+//   Serial.print( sensor.getAccelY());
+//   Serial.print(" ");
+//   Serial.println(buttonPressed);
+// */
 
 
 // void handleKY024(){ //hall sensor function
@@ -204,7 +203,7 @@ void setup() {
   Serial.begin(9600);    // Starts the serial communication with a baud rate of 9600
   Serial.println("Initializing Connection");
   initMPU();
-  //initKY024();
+  initKY024();
   initLED();
   initDRV();
   Serial.println("Initialization Complete");
@@ -216,7 +215,7 @@ void loop() {
   handleMPU();
   sendData();
     
-  unsigned long time = millis()+1000;
+  unsigned long time = millis()+20;
   while(millis() < time){
 
   }
